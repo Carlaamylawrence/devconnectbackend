@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   res.json({ msg: "Welcome" });
 });
 
-app.get("/users", userRoute);
+app.use("/users", userRoute);
 
 app.listen(app.get("port"), () => {
   console.log(`Listening for calls on port ${app.get("port")}`);
