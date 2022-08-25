@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const con = require("../lib/db.connection");
+const middleware= require("../middleware/auth")
 
 //GET ALL PROJECTS
 router.get("/", (req, res) => {
@@ -31,7 +32,8 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+//ADD A PROJECT
+router.post("/", middleware, (req, res) => {
   try {
     let sql = `INSERT INTO projects (description, type, deadline, tech, postedBy) VALUES(? , ? , ? , ? , ? );`;
     let { description, type, deadline, tech, postedBy } = req.body;
@@ -66,35 +68,43 @@ router.post("/", (req, res) => {
   }
 });
 
-router.patch("/:id", (req, res) => {
+// UPDATE A PROJECT
+router.patch("/:id", middleware, (req, res) => {
+  if (userRole === client){
   try {
     let sql = "SELECT * FROM projects WHERE ? ";
     let project = { project_id: req.params.id };
     con.query(sql, project, (err, result) => {
       if (err) throw err;
       if (result.length !== 0) {
-        let updateSql = `UPDATE projects SET ? WHERE id = ${req.params.id}`;
-        let updateUser = {
+        let updateSql = `UPDATE projects SET ? WHERE project_id = ${req.params.id}`;
+        const date = (req.body.deadline, new Date().toISOString().slice(0, 10));
+        let updateProject = {
           description: req.body.description,
           type: req.body.type,
-          deadline: req.body.date,
+          deadline: date,
           tech: req.body.tech,
           postedBy: req.body.postedBy,
         };
-        con.query(updateSql, updateUser, (err, updated) => {
+        con.query(updateSql, updateProject, (err, updated) => {
           if (err) throw err;
-          res.send("Successfully updated Product");
+          console.log(updated)
+          res.send("Successfully updated Project");
         });
       } else {
-        res.send("Product not found");
+        res.send("Project not found");
       }
     });
   } catch (error) {
     console.log(error);
   }
+}else{
+  res.send("not client")
+}
 });
 
-router.delete("/:id", (req, res) => {
+// DELETE PROJECT
+router.delete("/:id", middleware, (req, res) => {
   try {
     let sql = "Delete from users WHERE ?";
     let product = { product_id: req.params.id };

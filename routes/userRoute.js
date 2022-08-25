@@ -3,6 +3,7 @@ const router = express.Router();
 const con = require("../lib/db.connection");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const middleware= require("../middleware/auth")
 
 //ALL USERS
 router.get("/", (req, res) => {
@@ -163,18 +164,59 @@ router.post("/register", (req, res) => {
   }
 });
 
-router.patch("/:id", (req, res) => {
+// router.patch("/:id", (req, res) => {
+//   try {
+//     let sql = "SELECT * FROM users WHERE ? ";
+//     let user = { id: req.params.id };
+//     con.query(sql, user, (err, result) => {
+//       if (err) throw err;
+//       if (result.length !== 0) {
+//         let updateSql = `UPDATE users SET ? WHERE id = ${req.params.id}`;
+//         const salt = bcrypt.genSaltSync(10);
+//         const hash = bcrypt.hashSync(password, salt);
+//           let password=hash 
+//         let updateUser = {
+//           userRole: req.body.userRole,
+//           email: req.body.email,
+//           password: hash,
+//           bio: req.body.bio,
+//           location: req.body.location,
+//           availability: req.body.availability,
+//           experience: req.body.experience,
+//           technology: req.body.technology,
+//           portUrl: req.body.portUrl,
+//           githubUrl: req.body.githubUrl,
+//           projects: req.body.projects,
+//         };
+//         con.query(updateSql, updateUser, (err, updated) => {
+//           if (err) throw err;
+//           res.send("Successfully updated user");
+//         });
+//       } else {
+//         res.send("user not found");
+//       }
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
+router.patch("/:id", middleware, (req, res) => {
   try {
-    let sql = "SELECT * FROM users WHERE ? ";
-    let user = { id: req.params.id };
+    let sql = "SELECT * FROM users WHERE ?";
+    let user = {
+      id: req.params.id,
+    };
     con.query(sql, user, (err, result) => {
       if (err) throw err;
       if (result.length !== 0) {
         let updateSql = `UPDATE users SET ? WHERE id = ${req.params.id}`;
+        let salt = bcrypt.genSaltSync(10);
+        let hash = bcrypt.hashSync(req.body.password, salt);
         let updateUser = {
           userRole: req.body.userRole,
           email: req.body.email,
-          password: req.body.password,
+          password: hash,
           bio: req.body.bio,
           location: req.body.location,
           availability: req.body.availability,
@@ -186,10 +228,11 @@ router.patch("/:id", (req, res) => {
         };
         con.query(updateSql, updateUser, (err, updated) => {
           if (err) throw err;
-          res.send("Successfully updated Product");
+          console.log(updated);
+          res.send("Successfully Updated");
         });
       } else {
-        res.send("Product not found");
+        res.send("User not found");
       }
     });
   } catch (error) {
@@ -197,7 +240,7 @@ router.patch("/:id", (req, res) => {
   }
 });
 // DELETE A USER
-router.delete("/:id", (req, res) => {
+router.delete("/:id", middleware, (req, res) => {
   try {
     let sql = "Delete from users WHERE ?";
     let users = { id: req.params.id };
@@ -208,6 +251,20 @@ router.delete("/:id", (req, res) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+router.get("/verify", (req, res) => {
+  const token = req.header("x-auth-token");
+  jwt.verify(token, process.env.jwtSecret, (error, decodedToken) => {
+    if (error) {
+      res.status(401).json({
+        msg: "Unauthorized Access!",
+      });
+    } else {
+      res.status(200);
+      res.send(decodedToken);
+    }
+  });
 });
 
 module.exports = router;
