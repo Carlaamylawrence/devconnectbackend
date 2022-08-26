@@ -16,7 +16,7 @@ const userRoute = require("./routes/userRoute");
 const projectRoute = require("./routes/projectRoute");
 
 app.get("/", (req, res) => {
-  res.json({ msg: "Welcome" });
+  res.sendFile(__dirname + "/" + "index.html");
 });
 
 app.use("/users", userRoute);
@@ -27,6 +27,7 @@ app.listen(app.get("port"), () => {
   console.log("Press Ctrl+C to exit server");
 });
 
+app.use(express.static("public"));
 module.exports = {
   devServer: {
     Proxy: "*",

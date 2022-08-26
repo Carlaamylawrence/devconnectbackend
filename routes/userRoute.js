@@ -3,7 +3,7 @@ const router = express.Router();
 const con = require("../lib/db.connection");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const middleware= require("../middleware/auth")
+const middleware = require("../middleware/auth");
 
 //ALL USERS
 router.get("/", (req, res) => {
@@ -174,7 +174,7 @@ router.post("/register", (req, res) => {
 //         let updateSql = `UPDATE users SET ? WHERE id = ${req.params.id}`;
 //         const salt = bcrypt.genSaltSync(10);
 //         const hash = bcrypt.hashSync(password, salt);
-//           let password=hash 
+//           let password=hash
 //         let updateUser = {
 //           userRole: req.body.userRole,
 //           email: req.body.email,
@@ -253,7 +253,7 @@ router.delete("/:id", middleware, (req, res) => {
   }
 });
 
-router.get("/verify", (req, res) => {
+router.get("/users/verify", (req, res) => {
   const token = req.header("x-auth-token");
   jwt.verify(token, process.env.jwtSecret, (error, decodedToken) => {
     if (error) {
@@ -263,6 +263,7 @@ router.get("/verify", (req, res) => {
     } else {
       res.status(200);
       res.send(decodedToken);
+      console.log(error);
     }
   });
 });
