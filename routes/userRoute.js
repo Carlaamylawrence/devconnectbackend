@@ -108,6 +108,7 @@ router.post("/register", (req, res) => {
   try {
     let sql = `INSERT INTO users(userRole, email, password, bio, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ? , ? , ? , ? , ?, ? , ? , ? , ? , ?);`;
     let {
+      fullname,
       userRole,
       email,
       password,
@@ -123,6 +124,7 @@ router.post("/register", (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     let user = {
+      fullname: fullname,
       userRole: userRole,
       email: email,
       password: hash,
@@ -138,6 +140,7 @@ router.post("/register", (req, res) => {
     con.query(
       sql,
       [
+        user.fullname,
         user.userRole,
         user.email,
         user.password,
@@ -215,6 +218,7 @@ router.patch("/:id", middleware, (req, res) => {
         let hash = bcrypt.hashSync(req.body.password, salt);
         let updateUser = {
           userRole: req.body.userRole,
+          fullname: req.body.userRole,
           email: req.body.email,
           password: hash,
           bio: req.body.bio,
