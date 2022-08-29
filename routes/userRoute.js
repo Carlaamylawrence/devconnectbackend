@@ -66,6 +66,7 @@ router.post("/login", (req, res) => {
           const payload = {
             user: {
               id: result[0].id,
+              fullname: result[0].fullname,
               userRole: result[0].userRole,
               email: result[0].email,
               bio: result[0].bio,
@@ -106,7 +107,7 @@ router.post("/login", (req, res) => {
 // REGISTER
 router.post("/register", (req, res) => {
   try {
-    let sql = `INSERT INTO users(userRole, email, password, bio, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ? , ? , ? , ? , ?, ? , ? , ? , ? , ?);`;
+    let sql = `INSERT INTO users(fullname, userRole, email, password, bio, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ?, ? , ? , ? , ? , ?, ? , ? , ? , ? , ?);`;
     let {
       fullname,
       userRole,
