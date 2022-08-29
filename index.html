@@ -16,9 +16,10 @@
       crossorigin="anonymous"
     ></script>
 
-    <title>Document</title>
+    <title>API ROUTES</title>
   </head>
   <body>
+    <!-- USERS ROUTE -->
     <table class="table table-dark">
       <thead>
         <th colspan="3" class="text text-center">USERS</th>
@@ -56,5 +57,45 @@
         </tr>
       </tbody>
     </table>
+    <!-- PROJECTS ROUTE -->
+    <table class="table table-dark">
+      <thead>
+        <th colspan="3" class="text text-center">PROJECTS</th>
+        <tr>
+          <th scope="col">METHOD</th>
+          <th scope="col">URL</th>
+          <th scope="col">OUTCOME</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>GET</td>
+          <td>'/projectss'</td>
+          <td>Displays all projects</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>'/projects/:id'</td>
+          <td>Displays a single project</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>'/projects'</td>
+          <td>Adds a project</td>
+        </tr>
+        <tr>
+          <td>PATCH/td>
+          <td>'/projects'</td>
+          <td>Edits a project</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>'/projects/:id'</td>
+          <td>Delete a project</td>
+        </tr>
+      </tbody>
+    </table>
+    
+
   </body>
 </html>
