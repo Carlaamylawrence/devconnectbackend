@@ -219,7 +219,7 @@ router.patch("/:id", middleware, (req, res) => {
         let hash = bcrypt.hashSync(req.body.password, salt);
         let updateUser = {
           userRole: req.body.userRole,
-          fullname: req.body.userRole,
+          fullname: req.body.fullname,
           email: req.body.email,
           password: hash,
           bio: req.body.bio,
