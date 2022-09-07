@@ -70,6 +70,7 @@ router.post("/login", (req, res) => {
               userRole: result[0].userRole,
               email: result[0].email,
               bio: result[0].bio,
+              avatar: result[0].avatar,
               location: result[0].location,
               availability: result[0].availability,
               experience: result[0].experience,
@@ -107,13 +108,14 @@ router.post("/login", (req, res) => {
 // REGISTER
 router.post("/register", (req, res) => {
   try {
-    let sql = `INSERT INTO users(fullname, userRole, email, password, bio, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ?, ? , ? , ? , ? , ?, ? , ? , ? , ? , ?);`;
+    let sql = `INSERT INTO users(fullname, userRole, email, password, bio, avatar, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ?, ? , ? , ? , ?, ? , ?, ? , ? , ? , ? , ?);`;
     let {
       fullname,
       userRole,
       email,
       password,
       bio,
+      avatar,
       location,
       availability,
       experience,
@@ -130,6 +132,7 @@ router.post("/register", (req, res) => {
       email: email,
       password: hash,
       bio: bio,
+      avatar: avatar,
       location: location,
       availability: availability,
       experience: experience,
@@ -146,6 +149,7 @@ router.post("/register", (req, res) => {
         user.email,
         user.password,
         user.bio,
+        user.avatar,
         user.location,
         user.availability,
         user.experience,
@@ -223,6 +227,7 @@ router.patch("/:id", middleware, (req, res) => {
           email: req.body.email,
           password: hash,
           bio: req.body.bio,
+          avatar: req.body.avatar,
           location: req.body.location,
           availability: req.body.availability,
           experience: req.body.experience,

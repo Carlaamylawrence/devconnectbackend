@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const con = require("../lib/db.connection");
-const middleware= require("../middleware/auth")
+const middleware = require("../middleware/auth");
 
 //GET ALL PROJECTS
 router.get("/", (req, res) => {
@@ -35,23 +35,27 @@ router.get("/:id", (req, res) => {
 //ADD A PROJECT
 router.post("/", middleware, (req, res) => {
   try {
-    let sql = `INSERT INTO projects (description, type, deadline, tech, postedBy) VALUES(? , ? , ? , ? , ? );`;
-    let { description, type, deadline, tech, postedBy } = req.body;
+    let sql = `INSERT INTO projects (description, type, deadline, tech, email, postedBy) VALUES(? , ? , ? , ? , ? );`;
+    let { title, description, type, deadline, tech, postedBy } = req.body;
     const date = new Date().toISOString().slice(0, 10);
     let project = {
+      title: title,
       description: description,
       type: type,
       deadline: date,
       tech: tech,
+      email: email,
       postedBy: postedBy,
     };
     con.query(
       sql,
       [
+        project.title,
         project.description,
         project.type,
         project.deadline,
         project.tech,
+        email.email,
         project.postedBy,
       ],
       (err, result) => {
@@ -70,37 +74,40 @@ router.post("/", middleware, (req, res) => {
 
 // UPDATE A PROJECT
 router.patch("/:id", middleware, (req, res) => {
-  if (userRole === client){
-  try {
-    let sql = "SELECT * FROM projects WHERE ? ";
-    let project = { project_id: req.params.id };
-    con.query(sql, project, (err, result) => {
-      if (err) throw err;
-      if (result.length !== 0) {
-        let updateSql = `UPDATE projects SET ? WHERE project_id = ${req.params.id}`;
-        const date = (req.body.deadline, new Date().toISOString().slice(0, 10));
-        let updateProject = {
-          description: req.body.description,
-          type: req.body.type,
-          deadline: date,
-          tech: req.body.tech,
-          postedBy: req.body.postedBy,
-        };
-        con.query(updateSql, updateProject, (err, updated) => {
-          if (err) throw err;
-          console.log(updated)
-          res.send("Successfully updated Project");
-        });
-      } else {
-        res.send("Project not found");
-      }
-    });
-  } catch (error) {
-    console.log(error);
+  if (userRole === client) {
+    try {
+      let sql = "SELECT * FROM projects WHERE ? ";
+      let project = { project_id: req.params.id };
+      con.query(sql, project, (err, result) => {
+        if (err) throw err;
+        if (result.length !== 0) {
+          let updateSql = `UPDATE projects SET ? WHERE project_id = ${req.params.id}`;
+          const date =
+            (req.body.deadline, new Date().toISOString().slice(0, 10));
+          let updateProject = {
+            title: req.body.title,
+            description: req.body.description,
+            type: req.body.type,
+            deadline: date,
+            tech: req.body.tech,
+            email:req.body.tech,
+            postedBy: req.body.postedBy,
+          };
+          con.query(updateSql, updateProject, (err, updated) => {
+            if (err) throw err;
+            console.log(updated);
+            res.send("Successfully updated Project");
+          });
+        } else {
+          res.send("Project not found");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    res.send("not client");
   }
-}else{
-  res.send("not client")
-}
 });
 
 // DELETE PROJECT
