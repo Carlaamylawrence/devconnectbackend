@@ -77,7 +77,6 @@ router.post("/login", (req, res) => {
               technology: result[0].technology,
               portUrl: result[0].portUrl,
               githubUrl: result[0].githubUrl,
-              projects: result[0].projects,
             },
           };
           // Creating a token and setting expiry date
@@ -108,7 +107,7 @@ router.post("/login", (req, res) => {
 // REGISTER
 router.post("/register", (req, res) => {
   try {
-    let sql = `INSERT INTO users(fullname, userRole, email, password, bio, avatar, location, availability, experience, technology, portUrl, githubUrl, projects) VALUES(? , ?, ? , ? , ? , ?, ? , ?, ? , ? , ? , ? , ?);`;
+    let sql = `INSERT INTO users(fullname, userRole, email, password, bio, avatar, location, availability, experience, technology, portUrl, githubUrl) VALUES(? , ?, ? , ? , ? , ?, ? , ?, ? , ? , ? , ? );`;
     let {
       fullname,
       userRole,
@@ -122,7 +121,6 @@ router.post("/register", (req, res) => {
       technology,
       portUrl,
       githubUrl,
-      projects,
     } = req.body;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
@@ -139,7 +137,6 @@ router.post("/register", (req, res) => {
       technology: technology,
       portUrl: portUrl,
       githubUrl: githubUrl,
-      projects: projects,
     };
     con.query(
       sql,
@@ -156,7 +153,6 @@ router.post("/register", (req, res) => {
         user.technology,
         user.portUrl,
         user.githubUrl,
-        user.projects,
       ],
       (err, result) => {
         if (err) throw err;
@@ -219,22 +215,11 @@ router.patch("/:id", middleware, (req, res) => {
       if (err) throw err;
       if (result.length !== 0) {
         let updateSql = `UPDATE users SET ? WHERE id = ${req.params.id}`;
-        let salt = bcrypt.genSaltSync(10);
-        let hash = bcrypt.hashSync(req.body.password, salt);
         let updateUser = {
-          userRole: req.body.userRole,
-          fullname: req.body.fullname,
-          email: req.body.email,
-          password: hash,
-          bio: req.body.bio,
-          avatar: req.body.avatar,
-          location: req.body.location,
           availability: req.body.availability,
           experience: req.body.experience,
-          technology: req.body.technology,
           portUrl: req.body.portUrl,
           githubUrl: req.body.githubUrl,
-          projects: req.body.projects,
         };
         con.query(updateSql, updateUser, (err, updated) => {
           if (err) throw err;
