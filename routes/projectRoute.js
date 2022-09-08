@@ -75,35 +75,39 @@ router.post("/", middleware, (req, res) => {
 });
 
 // UPDATE A PROJECT
-router.patch("/:id", middleware, (req, res) => {
-  if (req.user.userRole === "client" || "admin") {
+router.patch("/updateitem/:id", middleware, (req, res) => {
+  console.log(req.user.userRole);
+  if (req.user.userRole === "admin") {
     // if (userRole === "client") {
     try {
       let sql = "SELECT * FROM projects WHERE ? ";
-      let project = { project_id: req.params.id };
-      con.query(sql, project, (err, result) => {
-        if (err) throw err;
-        if (result.length !== 0) {
-          let updateSql = `UPDATE projects SET ? WHERE project_id = ${req.params.id}`;
-          // const date =
-          //   (req.body.deadline, new Date().toISOString().slice(0, 10));
-          let updateProject = {
-            title: req.body.title,
-            description: req.body.description,
-            type: req.body.type,
-            tech: req.body.tech,
-            email: req.body.email,
-            postedBy: req.body.postedBy,
-          };
-          con.query(updateSql, updateProject, (err, updated) => {
-            if (err) throw err;
-            console.log(updated);
-            res.send("Successfully updated Project");
-          });
-        } else {
-          res.send("Project not found");
+      // let project = {
+      //    project_id: req.params.id
+      //    };
+      console.log(req.params.id);
+      con.query(
+        `SELECT * FROM projects WHERE  project_id = '${req.params.id}'`,
+        (err, result) => {
+          if (err) throw err;
+          if (result.length === 0) {
+            res.send(JSON.stringify("Project not found"));
+          } else {
+            let updateSql = `UPDATE projects SET ? WHERE project_id = '${req.params.id}'`;
+            let updateProject = {
+              title: req.body.title,
+              description: req.body.description,
+              type: req.body.type,
+              tech: req.body.tech,
+              email: req.body.email,
+            };
+            con.query(updateSql, updateProject, (err, updated) => {
+              if (err) throw err;
+              console.log(updated);
+              res.send(JSON.stringify("Successfully updated Project"));
+            });
+          }
         }
-      });
+      );
     } catch (error) {
       console.log(error);
     }
@@ -114,13 +118,16 @@ router.patch("/:id", middleware, (req, res) => {
 
 // DELETE PROJECT
 router.delete("/:id", middleware, (req, res) => {
+  console.log(req.params.id);
+
   if (req.user.userRole === "client" || "admin") {
     try {
-      let sql = "Delete from projects WHERE ?";
+      let sql = `Delete from projects WHERE project_id = '${req.params.id}`;
       let project = { project_id: req.params.id };
       con.query(sql, project, (err, result) => {
         if (err) throw err;
-        res.send(result);
+        console.log(result);
+        res.send(JSON.stringify("Successfully deleted Project"));
       });
     } catch (error) {
       console.log(error);

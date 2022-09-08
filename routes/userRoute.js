@@ -104,7 +104,7 @@ router.post("/login", (req, res) => {
   }
 });
 
-// REGISTER
+// REGISTER AS DEV
 router.post("/register", (req, res) => {
   try {
     let sql = `INSERT INTO users(fullname, userRole, email, password, bio, avatar, location, availability, experience, technology, portUrl, githubUrl) VALUES(? , ?, ? , ? , ? , ?, ? , ?, ? , ? , ? , ? );`;
@@ -159,7 +159,37 @@ router.post("/register", (req, res) => {
         console.log(result);
         // res.json(`User ${(user.fullname, user.email)} created successfully`);
         res.json({
-          msg: "Regitration Successful",
+          msg: "Developer Regitration Successful",
+        });
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// REGISTER AS CLIENT
+router.post("/registerclient", (req, res) => {
+  try {
+    let sql = `INSERT INTO users( fullname, userRole, email, password) VALUES(?, ? , ?, ? );`;
+    let { userRole, email, password } = req.body;
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+    let user = {
+      fullname: fullname,
+      userRole: userRole,
+      email: email,
+      password: hash,
+    };
+    con.query(
+      sql,
+      [user.fullname, user.userRole, user.email, user.password],
+      (err, result) => {
+        if (err) throw err;
+        console.log(result);
+        // res.json(`User ${(user.fullname, user.email)} created successfully`);
+        res.json({
+          msg: "Client Regitration Successful",
         });
       }
     );
@@ -235,17 +265,30 @@ router.patch("/:id", middleware, (req, res) => {
   }
 });
 // DELETE A USER
-router.delete("/:id", middleware, (req, res) => {
+router.delete("/:id", (req, res) => {
+  console.log(req.params.id);
   try {
-    let sql = "Delete from users WHERE ?";
-    let users = { id: req.params.id };
-    con.query(sql, users, (err, result) => {
+    let sql = `Delete from users WHERE id = ${req.params.id}`;
+    let user = { id: req.params.id };
+    con.query(sql, user, (err, result) => {
       if (err) throw err;
-      res.send(result);
+      console.log(result);
+      res.send(JSON.stringify("Successfully deleted user"));
     });
   } catch (error) {
     console.log(error);
   }
+
+  // try {
+  //   let sql = "Delete from users WHERE ?";
+  //   let users = { id: req.params.id };
+  //   con.query(sql, users, (err, result) => {
+  //     if (err) throw err;
+  //     res.send(result);
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 });
 
 router.get("/users/verify", (req, res) => {
