@@ -8,7 +8,19 @@ const middleware = require("../middleware/auth");
 //ALL USERS
 router.get("/", (req, res) => {
   try {
-    con.query("SELECT * FROM users", (err, result) => {
+    con.query("SELECT * FROM users ", (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    });
+  } catch (error) {
+    console.log(error);
+    // res.status(400).send(error);
+  }
+});
+//ALL USERS
+router.get("/devs", (req, res) => {
+  try {
+    con.query(`SELECT * FROM users where userRole = 'dev'`, (err, result) => {
       if (err) throw err;
       res.send(result);
     });
