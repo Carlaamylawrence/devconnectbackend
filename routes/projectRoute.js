@@ -70,7 +70,10 @@ router.post("/", middleware, (req, res) => {
       console.log(error);
     }
   } else {
-    res.send("not authorised");
+    res.status(400).json({
+      status: "error",
+      msg: "Not Authorised",
+    });
   }
 });
 
@@ -90,7 +93,10 @@ router.patch("/updateitem/:id", middleware, (req, res) => {
         (err, result) => {
           if (err) throw err;
           if (result.length === 0) {
-            res.send(JSON.stringify("Project not found"));
+            console.log(result);
+            res.json({
+              msg: "Project added Successfully",
+            });
           } else {
             let updateSql = `UPDATE projects SET ? WHERE project_id = '${req.params.id}'`;
             let updateProject = {
@@ -112,7 +118,10 @@ router.patch("/updateitem/:id", middleware, (req, res) => {
       console.log(error);
     }
   } else {
-    res.send("not client");
+    res.status(400).json({
+      status: "error",
+      msg: "Not Authorised",
+    });
   }
 });
 
@@ -122,18 +131,23 @@ router.delete("/:id", middleware, (req, res) => {
 
   if (req.user.userRole === "client" || "admin") {
     try {
-      let sql = `Delete from projects WHERE project_id = '${req.params.id}`;
+      let sql = `Delete from projects WHERE project_id = '${req.params.id}'`;
       let project = { project_id: req.params.id };
       con.query(sql, project, (err, result) => {
         if (err) throw err;
         console.log(result);
-        res.send(JSON.stringify("Successfully deleted Project"));
+        res.json({
+          msg: "Project added Successfully",
+        });
       });
     } catch (error) {
       console.log(error);
     }
   } else {
-    res.send("not authorised");
+    res.status(400).json({
+      status: "error",
+      msg: "Not Authorised",
+    });
   }
 });
 

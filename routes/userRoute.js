@@ -184,7 +184,7 @@ router.post("/register", (req, res) => {
 router.post("/registerclient", (req, res) => {
   try {
     let sql = `INSERT INTO users( fullname, userRole, email, password) VALUES(?, ? , ?, ? );`;
-    let { userRole, email, password } = req.body;
+    let { fullname, userRole, email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     let user = {
